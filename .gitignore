@@ -1,9 +1,11 @@
 # This project used Clion and vs code
-.vscode/*
-./cmake-build-debug/*
-./.idea
+.vscode/
+cmake-build-debug/
+CMakeLists.txt
+.idea/
 
 # some small test
-./test/*
+test/
+build
 a.out
 
