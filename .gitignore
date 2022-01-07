@@ -1,0 +1,9 @@
+# This project used Clion and vs code
+.vscode/*
+./cmake-build-debug/*
+./.idea
+
+# some small test
+./test/*
+a.out
+
