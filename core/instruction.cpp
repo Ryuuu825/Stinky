@@ -2,8 +2,6 @@
 
 #include "vm.h"
 
-
-
 /* 
  *  add {0001}
  *  Take two number, add them add and store it into a register
@@ -135,6 +133,90 @@ void op_not(u16 instruction)
 
 }
 
+/**
+ * br -- branch 
+ * 0000 111 000000000
+ * First four bits are opcode 
+ * next three bits are for condition flag
+ * next nine bits are for program counter
+ */
+void branch(u16 instrcution) 
+{
+    extern u16 reg[16];
+    
+    u16 pc_offset = sign_extend(instrcution & 0x1FF , 9);
+    u16 flag = (instrcution >> 9)  & 0b111;
+
+    if (flag & reg[R_COND])
+    {
+        reg[R_COND] += pc_offset;
+    };
+}
+
+/**
+ * JMP -- jump
+ * 1100 000 000 000000
+ * First four bits are opcode 1100
+ * next three bits are non use
+ * next three bits are the destination register
+ */
+void jump(u16 instruction)
+{
+    extern u16 reg[16];
+
+    u16 loc = (instruction >> 6) & 0b111;
+    
+    reg[R_COUNT] = reg[loc];
+
+#ifdef Debug
+    printf("[\033[1;31mJMP\033[0m] Instruction: 0x%hu | Jmmp to %hu\n",
+              instruction , reg[R_COUNT]);
+#endif
+}
+
+/**
+ *  JSR / JSRR
+ *  0100 
+ *  Frist four bits are opcode 0100
+ * 
+ *  This opertaion have two mode 
+ *  1) 0100 1 00000000000 (JSR)
+ *  remaining 11 bits used for offset the program counter
+ * 
+ *  2) 0100 0 00 000 000000 (JSRR)
+ *    index 9 - 11 used for tell which what register store the memory adress
+ */
+void jsr(u16 instruction)
+{
+    extern u16 reg[16];
+
+    reg[R_R7] = reg[R_COUNT];
+
+    u16 flag = (instruction >> 11 ) & 0b1;
+
+    if (flag) 
+    {
+        u16 offset = sign_extend(instruction & 0x7FF , 11);
+        reg[R_COUNT] += offset;
+    }
+    else 
+    {
+        u16 loc = (instruction >> 6) &0b111;
+        reg[R_COUNT] = reg[loc];
+    }
+
+}
+
+
+void load(u16 instruction)
+{
+    extern u16 reg[16];
+    u16 destination = (instruction >> 9) & 0b111;
+    u16 offset = sign_extend(instruction & 0x1FF , 9);
+
+    reg[destination] = mem_read(reg[R_COUNT] + offset);
+    update_flag(destination);
+}
 
 
 

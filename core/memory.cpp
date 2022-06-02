@@ -1,4 +1,4 @@
-#include "memory.h"
+#include "./includes/memory.h"
 
 
 u16 mem_read(u16 address) 

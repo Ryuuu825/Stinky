@@ -30,3 +30,8 @@ void add(u16 instruction);
 void ldi(u16 instrution);
 void op_and(u16 instruction);
 void op_not(u16 instruction);
+void branch(u16 instrcution);
+void jump(u16 instruction);
+void jsr(u16 instruction);
+void load(u16 instruction);
+void ldi(u16 instruction);
